@@ -1,0 +1,2 @@
+# Don't need pydub as it is included in the Lambda Layer along with FFMPEG.
+# pydub==0.25.1
