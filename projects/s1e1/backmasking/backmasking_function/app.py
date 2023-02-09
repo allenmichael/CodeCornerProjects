@@ -37,11 +37,11 @@ def lambda_handler(event, context):
 
         return backmask(backmask_message=backmask_message, voice_id=voice_id)
     else:
-        print("missing both encoded-mp3 and message fields.")
+        print("missing message field.")
         return {
             'statusCode': 400,
             'headers': {},
-            'body': json.dumps({'msg': 'Bad Request: must provide either encoded-mp3 field or message field in JSON payload.'})
+            'body': json.dumps({'msg': 'Bad Request: must provide message field in JSON payload.'})
         }
 
 

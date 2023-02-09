@@ -13,7 +13,7 @@ The API responds with an MP3 encoded in a [base64 string](https://en.wikipedia.o
 **Note:** Some commands are specific to MacOS like `afplay` and some commands must be installed like `jq`.
 You can retrieve your AWS API Gateway URL from the [Outputs tab](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html) in the [CloudFormation Stack created in your AWS Console](https://console.aws.amazon.com/cloudformation).
 ```sh
-curl -X POST https://<insert-your-api-gateway-url>/Prod/backmask/ -H 'Contnet-Type: application/json' -d ' {"message": "Please reverse this audio for me."}' | jq -r .audio | base64 -d > please.mp3 && afplay please.mp3
+curl -X POST https://<insert-your-api-gateway-url> -H 'Content-Type: application/json' -d ' {"message": "Please reverse this audio for me."}' | jq -r .audio | base64 -d > please.mp3 && afplay please.mp3
 ```
 
 ## Build and Deploy the Project
