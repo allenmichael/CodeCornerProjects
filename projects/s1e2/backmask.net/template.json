@@ -26,7 +26,6 @@
         "Role": null,
         "Policies": [
           "AWSLambdaBasicExecutionRole",
-          "AmazonS3FullAccess",
           {
             "Version": "2012-10-17",
             "Statement": {
