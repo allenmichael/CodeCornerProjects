@@ -1,32 +1,47 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Transform": "AWS::Serverless-2016-10-31",
-  "Description": "An AWS Serverless Application to backmask, or reverse the audio version, of a piece of text.",
-
+  "Description": "An AWS Serverless Application to backmask, or reverse the audio version, of a piece of text. This template is partially managed by Amazon.Lambda.Annotations (v0.12.0.0).",
   "Globals": {
     "Function": {
       "Timeout": 30,
       "MemorySize": 256
     }
   },
-
   "Resources": {
-    "CreateBackmaskFunction": {
-      "Type": "AWS::Serverless::Function",
+    "FFMPEGLayer": {
+      "Type": "AWS::Serverless::LayerVersion",
       "Properties": {
-        "Architectures": [
+        "CompatibleArchitectures": [
           "x86_64"
         ],
-        "Handler": "backmask::Backmask.Functions::CreateBackmask",
-        "Runtime": "dotnet6",
-        "CodeUri": "function/",
-        "Layers": [
-          { "Ref": "FFMPEGLayer" }
+        "LayerName": "ffmpeg-bin",
+        "Description": "ffmpeg dependencies for backmask.net function",
+        "ContentUri": "dependencies/",
+        "CompatibleRuntimes": [
+          "dotnet6"
         ],
-        "Role": null,
+        "LicenseInfo": "https://ffmpeg.org/legal.html"
+      }
+    },
+    "BackmaskFunctionsCreateBackmaskGenerated": {
+      "Type": "AWS::Serverless::Function",
+      "Metadata": {
+        "Tool": "Amazon.Lambda.Annotations",
+        "SyncedEvents": [
+          "RootPost"
+        ]
+      },
+      "Properties": {
+        "Runtime": "dotnet6",
+        "CodeUri": "function",
+        "Layers": [
+          {
+            "Ref": "FFMPEGLayer"
+          }
+        ],
         "Policies": [
           "AWSLambdaBasicExecutionRole",
-          "AmazonS3FullAccess",
           {
             "Version": "2012-10-17",
             "Statement": {
@@ -38,32 +53,20 @@
             }
           }
         ],
+        "PackageType": "Zip",
+        "Handler": "backmask::Backmask.Functions_CreateBackmask_Generated::CreateBackmask",
         "Events": {
-          "CreateBackmask": {
+          "RootPost": {
             "Type": "HttpApi",
             "Properties": {
               "Path": "/backmask",
-              "Method": "POST",
-              "PayloadFormatVersion": "2.0"
+              "Method": "POST"
             }
           }
         }
       }
-    },
-
-    "FFMPEGLayer": {
-      "Type": "AWS::Serverless::LayerVersion",
-      "Properties": {
-        "CompatibleArchitectures": [ "x86_64" ],
-        "LayerName": "ffmpeg-bin",
-        "Description": "ffmpeg dependencies for backmask.net function",
-        "ContentUri": "dependencies/",
-        "CompatibleRuntimes": [ "dotnet6" ],
-        "LicenseInfo": "https://ffmpeg.org/legal.html"
-      }
     }
   },
-
   "Outputs": {
     "BackmaskApi": {
       "Description": "API Gateway endpoint URL for CreateBackmask Lambda function",

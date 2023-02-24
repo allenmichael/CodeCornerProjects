@@ -1,9 +1,10 @@
 using Amazon.Lambda.Core;
-using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Polly;
 using Amazon.Polly.Model;
 using FFMpegCore;
 using Backmask.ffmpeg;
+using Amazon.Lambda.Annotations;
+using Amazon.Lambda.Annotations.APIGateway;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
@@ -43,29 +44,22 @@ public class Functions
     /// </summary>
     /// <param name="request"></param>
     /// <returns>The API Gateway response.</returns>
-    public async Task<APIGatewayHttpApiV2ProxyResponse> CreateBackmask(APIGatewayHttpApiV2ProxyRequest request, ILambdaContext context)
+    [LambdaFunction]
+    [HttpApi(LambdaHttpMethod.Post, "/backmask")]
+    public async Task<IHttpResult> CreateBackmask([FromQuery]string voiceOverride, [FromBody]string textToBackmask, ILambdaContext context)
     {
         Logger = context.Logger;
 
-        if (string.IsNullOrEmpty(request.Body) || request.RequestContext.Http.Method != "POST")
+        if (string.IsNullOrEmpty(textToBackmask))
         {
-            return new APIGatewayHttpApiV2ProxyResponse
-            {
-                StatusCode = 400,
-                Body = "Invalid request; missing body or invalid verb (expected POST)"
-            };
+            return HttpResults.BadRequest("Missing text to backmask");
         }
 
-        var voiceId = request.QueryStringParameters?[VoiceIdParameter] ?? DefaultVoiceId;
+        var voiceId = voiceOverride ?? DefaultVoiceId;
 
-        var textToBackmask = request.Body;
         if (textToBackmask.Length > MaxCharacters)
         {
-            return new APIGatewayHttpApiV2ProxyResponse
-            {
-                StatusCode = 400,
-                Body = $"Invalid request; text to backmask is limited to {MaxCharacters} in length"
-            };
+            return HttpResults.BadRequest($"Invalid request; text to backmask is limited to {MaxCharacters} in length");
         }
 
         Logger.LogInformation($"Backmasking message: {textToBackmask} using voice: {voiceId}");
@@ -74,20 +68,11 @@ public class Functions
         {
             var encodedAudio = await BackmaskText(textToBackmask, voiceId);
 
-            return new APIGatewayHttpApiV2ProxyResponse
-            {
-                Body = encodedAudio,
-                StatusCode = 200,
-                Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
-            };
+            return HttpResults.Ok(encodedAudio);
         }
         catch (Exception)
         {
-            return new APIGatewayHttpApiV2ProxyResponse
-            {
-                StatusCode = 500,
-                Body = "Failed to backmask text, check logs for error details"
-            };
+            return HttpResults.InternalServerError("Failed to backmask text, check logs for error details");
         }
     }
 
