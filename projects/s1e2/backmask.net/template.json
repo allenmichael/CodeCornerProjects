@@ -1,0 +1,75 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Transform": "AWS::Serverless-2016-10-31",
+  "Description": "An AWS Serverless Application to backmask, or reverse the audio version, of a piece of text.",
+
+  "Globals": {
+    "Function": {
+      "Timeout": 30,
+      "MemorySize": 256
+    }
+  },
+
+  "Resources": {
+    "CreateBackmaskFunction": {
+      "Type": "AWS::Serverless::Function",
+      "Properties": {
+        "Architectures": [
+          "x86_64"
+        ],
+        "Handler": "backmask::Backmask.Functions::CreateBackmask",
+        "Runtime": "dotnet6",
+        "CodeUri": "function/",
+        "Layers": [
+          { "Ref": "FFMPEGLayer" }
+        ],
+        "Role": null,
+        "Policies": [
+          "AWSLambdaBasicExecutionRole",
+          "AmazonS3FullAccess",
+          {
+            "Version": "2012-10-17",
+            "Statement": {
+              "Effect": "Allow",
+              "Action": [
+                "polly:SynthesizeSpeech"
+              ],
+              "Resource": "*"
+            }
+          }
+        ],
+        "Events": {
+          "CreateBackmask": {
+            "Type": "HttpApi",
+            "Properties": {
+              "Path": "/backmask",
+              "Method": "POST",
+              "PayloadFormatVersion": "2.0"
+            }
+          }
+        }
+      }
+    },
+
+    "FFMPEGLayer": {
+      "Type": "AWS::Serverless::LayerVersion",
+      "Properties": {
+        "CompatibleArchitectures": [ "x86_64" ],
+        "LayerName": "ffmpeg-bin",
+        "Description": "ffmpeg dependencies for backmask.net function",
+        "ContentUri": "dependencies/",
+        "CompatibleRuntimes": [ "dotnet6" ],
+        "LicenseInfo": "https://ffmpeg.org/legal.html"
+      }
+    }
+  },
+
+  "Outputs": {
+    "BackmaskApi": {
+      "Description": "API Gateway endpoint URL for CreateBackmask Lambda function",
+      "Value": {
+        "Fn::Sub": "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/backmask"
+      }
+    }
+  }
+}
