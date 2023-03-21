@@ -2,7 +2,7 @@
 
 You may have caught one of our shows or seen us present at one of the many AWS events covered by AWS on Air. If not, be sure to check out our show on the following livestreaming platforms:
 
-[Twitch: twitch.tv/awsonair](https://twitch.tv/awsonair)
+[Twitch](https://twitch.tv/awsonair)
 
 [LinkedIn](https://www.linkedin.com/company/amazon-web-services/)
 
