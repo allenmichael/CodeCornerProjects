@@ -1,0 +1,32 @@
+{
+  "name": "cc-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build-ts": "tsc",
+    "build": "npm run build-ts",
+    "serve": "node dist/index.js",
+    "start": "npm run serve"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.13.5",
+    "@types/koa-bodyparser": "^4.3.10",
+    "@types/koa-json": "^2.0.20",
+    "@types/koa-router": "^7.4.4",
+    "@types/node": "^18.15.1",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.295.0",
+    "@aws-sdk/client-sagemaker-runtime": "^3.290.0",
+    "@aws-sdk/lib-dynamodb": "^3.295.0",
+    "koa": "^2.14.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa-json": "^2.0.2",
+    "koa-router": "^12.0.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

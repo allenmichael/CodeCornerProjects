@@ -19,3 +19,5 @@ You've found where we store all our projects!
 [S1:E1 Backmasking](projects/s1e1/backmasking)
 
 [S1:E2 Backmasking in .NET](projects/s1e2/backmask.net)
+
+[S1:E3 Collectable Cards API Starter in AWS ECS](projects/s1e3/koa-on-ecs-starter)
