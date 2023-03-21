@@ -31,6 +31,7 @@ You'll use the [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_starte
 To deploy:
 
 `cdk bootstrap`
+
 `cdk deploy`
 
 To remove: 
