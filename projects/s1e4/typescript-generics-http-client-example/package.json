@@ -1,0 +1,16 @@
+{
+  "name": "typescript-generics-http-client-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "keywords": [],
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node main.js"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/node": "^18.15.11"
+  }
+}
